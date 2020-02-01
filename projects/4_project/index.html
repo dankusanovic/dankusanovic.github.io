@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Danilo S. Kusanovic | Project IV</title>
+  <meta name="description" content="Added on [*folio](https://github.com/bogoli/-folio) design.
+">
+
+  
+
+  <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="canonical" href="/projects/4_project/">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    
+    <span class="site-title">
+        
+        <strong>Danilo</strong> Kusanovic
+    </span>
+    
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+      <div class="trigger">
+        <!-- About -->
+        <a class="page-link" href="/">about</a>
+
+        <!-- Blog -->
+        <a class="page-link" href="/blog/">blog</a>
+
+        <!-- Pages -->
+        
+          
+        
+          
+        
+          
+            <a class="page-link" href="/library/">Library</a>
+          
+        
+          
+        
+          
+            <a class="page-link" href="/projects/">Projects</a>
+          
+        
+          
+            <a class="page-link" href="/publications/">Publications</a>
+          
+        
+          
+            <a class="page-link" href="/teaching/">Teaching</a>
+          
+        
+          
+            <a class="page-link" href="/assets/pdf/CV.pdf">Vitae</a>
+          
+        
+          
+        
+          
+        
+
+        <!-- CV link -->
+        <!-- <a class="page-link" href="/assets/pdf/CV.pdf">vitae</a> -->
+
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Project IV</h1>
+    <h5 class="post-description">Finite Volume Mimetic Finite Difference Using Staggered Mesh.</h5>
+  </header>
+
+  <article class="post-content Project IV clearfix">
+    <p>The aim of this project is to solve the incompressible Navier-Stokes equations using the staggered-mesh, second-order finite-volume/mimetic finite-difference method. The problem, we are dealing with this time, is a flow within a rectangular box with aspect ratio <script type="math/tex">L_x/L_y</script>. The top wall will move with a constant speed <script type="math/tex">U</script> to the right, generating the so–called <strong><em>lid driven cavity</em></strong> flow.</p>
+
+<p>We will consider, for simplicity, a uniform grid with equal grid spacing, <script type="math/tex">h_x</script> in the <script type="math/tex">x</script>–direction, and <script type="math/tex">h_y</script> in the <script type="math/tex">y</script>–directions. In what follows, the quations are made nondimensional by the Reynold’s number, so that the results can be compared with the theoretical ones given in <a href="#2">[2]</a>.</p>
+
+<h3 id="incompressible-navierstokes-equation">Incompressible Navier–Stokes equation.</h3>
+
+<p>The dimensionless incompressible Navier–Stokes equation in its traditional form for solving the velocity field is given as follows</p>
+
+<script type="math/tex; mode=display">\partial_t \textbf{u} + \textbf{u} \cdot \nabla \textbf{u} + \nabla p = \frac{1}{R_e} \, \nabla^2 \textbf{u} \,,</script>
+
+<script type="math/tex; mode=display">\nabla \cdot \textbf{u} = 0 \,,</script>
+
+<p>where the quantity <script type="math/tex">p(x,y)</script> represents the preassure at point <script type="math/tex">(x,y)</script>, <script type="math/tex">R_e</script> represents the Reynold’s number, and <script type="math/tex">\textbf{u}</script> the velocity field in two-dimensions which is given by</p>
+
+<script type="math/tex; mode=display">\textbf{u}(x,y)=\left[ u(x,y), v(x,y) \right]^\top \,,</script>
+
+<p>on a rectangular domain <script type="math/tex">\Omega = \left[0, L_x \right] \times \left[0, L_y \right]</script>.</p>
+
+<p>The four boundaries are denoted <script type="math/tex">\textbf{N}</script>orth, <script type="math/tex">\textbf{S}</script>outh, <script type="math/tex">\textbf{W}</script>est, and <script type="math/tex">\textbf{E}</script>ast. The domain is fixed in time, and we consider no–slip boundary conditions on each wall. In this regard, the boundary condition impossed in the problem are such that,</p>
+
+<p>For the upper (<script type="math/tex">\textbf{N}</script>orth) and lower (<script type="math/tex">\textbf{S}</script>outh) bounds:</p>
+
+<script type="math/tex; mode=display">u(x, L_y ) = u_N(x) \,,</script>
+
+<script type="math/tex; mode=display">v(x, L_y ) = 0 \,,</script>
+
+<script type="math/tex; mode=display">u(x, 0   ) = u_S(x) \,,</script>
+
+<script type="math/tex; mode=display">v(x, 0   ) = 0 \,,</script>
+
+<p>For the left (<script type="math/tex">\textbf{W}</script>est) and right (<script type="math/tex">\textbf{E}</script>ast) bounds:</p>
+
+<script type="math/tex; mode=display">u(0, y   ) = 0  \,,</script>
+
+<script type="math/tex; mode=display">v(0, y   ) = v_W(y) \,,</script>
+
+<script type="math/tex; mode=display">u(L_x , y) = 0 \,,</script>
+
+<script type="math/tex; mode=display">v(L_x , y) = v_E(y)  \,,</script>
+
+<p>For the development of this project, and in what it follows, we have considered <script type="math/tex">v_E(y) = 0</script>, <script type="math/tex">v_W(y) = 0</script>, <script type="math/tex">u_S(x)</script>, and <script type="math/tex">u_N(x)=1</script>, for all cases.</p>
+
+<h3 id="numerical-solution-approach">Numerical Solution Approach.</h3>
+
+<p>First, we are going to derive and implement a time marching method for the index<script type="math/tex">-2</script> DAE system represented above. The time marching scheme will be implicit in the viscous term, and at least second-order accurate for the variables $q=\left( u,v\right)^T$. Moreover, we are going to develop an algorithm such that desired properties as a discrete conservation principle for mass, mometnum, and kinetic energy are preserved. Also, mimetic properties such that the scheme follow laws of differential calculus, and commutivity of operators will be enforced, see <a href="#1">[1]</a> for more details.</p>
+
+<p>The continuity equation, this is, <script type="math/tex">\nabla \cdot \textbf{u} = 0</script>, is going to be discretized in the following manner</p>
+
+<script type="math/tex; mode=display">\nabla \cdot \textbf{u} = \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} = 0</script>
+
+<script type="math/tex; mode=display">\quad \quad \;\, \approx \frac{u_{i+1,j} - u_{i,j}}{h_x} - \frac{v_{i,j+1} - v_{i,j}}{h_y} = 0</script>
+
+<script type="math/tex; mode=display">\quad \quad \;\, \approx \textbf{D} \, \textbf{u} = \left[D_x, D_y \right] \textbf{u} = 0</script>
+
+<p>The gradient of the pressure, i.e., <script type="math/tex">\nabla p</script>, is going to be discretize as</p>
+
+<script type="math/tex; mode=display">\nabla p = \left( \frac{\partial p}{\partial x}, \frac{\partial p}{\partial y} \right)^\top</script>
+
+<script type="math/tex; mode=display">\quad \;\, \approx \left( \frac{p_{i,j} - p_{i-1,j}}{h_x}, \frac{p_{i,j} - p_{i,j-1}}{h_y} \right)^\top</script>
+
+<script type="math/tex; mode=display">\quad \;\,  \approx \textbf{D} \, p = \left[D_x, D_y \right]</script>
+
+<p>The vorticity field. i.e., <script type="math/tex">\nabla \times \textbf{u}</script>, is going to be discretize as</p>
+
+<script type="math/tex; mode=display">\nabla \times \textbf{u} = \frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}</script>
+
+<script type="math/tex; mode=display">\quad \quad \;\, \approx \frac{v_{i,j} - v_{i-1,j}}{h_x} - \frac{u_{i,j} - u_{i,j-1}}{h_y}</script>
+
+<script type="math/tex; mode=display">\quad \quad  \;\, \approx \textbf{C} \, \textbf{u} = \left[C_y, C_x \right] \textbf{u}</script>
+
+<p>Equipped with last three equations, we can attempt to compute <script type="math/tex">\nabla \cdot \left( \nabla \times \phi \right)</script> in its descrete version and check that indeed this quantity is zero. In other words, the discrete operator mimics the identity <script type="math/tex">\nabla \cdot \left( \nabla \times \phi \right) = 0</script>.</p>
+
+<p>The Laplacian of a vector fiels, i.e., <script type="math/tex">\nabla^2 \textbf{u}</script>, is going to be discretize as</p>
+
+<script type="math/tex; mode=display">\nabla^2 \textbf{u} = \nabla \left( \nabla \cdot \textbf{u} \right) - \nabla \times \left( \nabla \times \textbf{u} \right)</script>
+
+<script type="math/tex; mode=display">\quad \quad \, \approx \textbf{L} \, \textbf{u} = -\textbf{D} \, \textbf{G} \,  \textbf{u} - \textbf{C} \, \textbf{C}^T \, \textbf{u}</script>
+
+<p>In order to employ the discrete stream-function, let define <script type="math/tex">q = \textbf{C} \, s</script>, then, discrete conservation of mass is automatically satisfied since <script type="math/tex">\textbf{D} \, q = \textbf{D} \, \textbf{C} \, s = 0</script>. Futhermore, we can write the vector field <script type="math/tex">q</script> using the Helmholtz decomposition, this is basically <script type="math/tex">q = \nabla \times \psi - \nabla \phi</script>, then the operators that mimics the Helmholtz decomposition is <script type="math/tex">q = \textbf{C} \, s - \textbf{D}^T \, f</script>. Note that taking the divergence of the previous equation, we get</p>
+
+<script type="math/tex; mode=display">\textbf{D} \, q = \textbf{D} \, \textbf{C} \, s - \textbf{D} \, \textbf{D}^T \, f</script>
+
+<script type="math/tex; mode=display">\quad \; \; \, = -\textbf{D} \, \textbf{D}^T \, f</script>
+
+<script type="math/tex; mode=display">\quad \; \; \,  = 0</script>
+
+<p>Now, to take into account the boundary conditions, we introduce a layer of <code class="language-plaintext highlighter-rouge">ghost</code> cells, and set <script type="math/tex">\textbf{u}</script> velocities in them to match no-slip, this basically means that for the upper-layer, we have</p>
+
+<script type="math/tex; mode=display">\frac{1}{2} \left( u_{i,n} + u_{i,n+1} \right)  = 0</script>
+
+<p>And for the lower-layer</p>
+
+<script type="math/tex; mode=display">\frac{1}{2} \left( u_{i,0} + u_{i,1} \right)  = 0</script>
+
+<p>This will introduce some inhomogeneous term from no-slip boundary conditions, which can be written as <script type="math/tex">b = \left[ b_u, b_v\right]^\top</script>. Finally the advection term, after some algebra, can be written as</p>
+
+<script type="math/tex; mode=display">\left( u \otimes u \right)_{i,j} = \frac{1}{4} \left( u_{i,j} + u_{i,j-1} \right)^2</script>
+
+<script type="math/tex; mode=display">\left( v \otimes v \right)_{i,j} = \frac{1}{4} \left( v_{i-1,j} + v_{i,j} \right)^2</script>
+
+<script type="math/tex; mode=display">\left( u \otimes v \right)_{i,j} = \frac{1}{4} \left( u_{i,j} + u_{i,j-1} \right) \left( v_{i-1,j} + v_{i,j} \right)</script>
+
+<p>Which will allow us to discretize the non-dimensionalize incompresible Navier-Stokes equations. Now we want to solve</p>
+
+<script type="math/tex; mode=display">\frac{\partial u}{\partial t} + \frac{\partial u^2}{\partial x} + \frac{\partial u \, v}{\partial y} = -\frac{\partial p}{\partial x} + \frac{1}{Re} \nabla^2 \, u</script>
+
+<script type="math/tex; mode=display">\frac{\partial v}{\partial t} + \frac{\partial u \, v}{\partial x} + \frac{\partial v^2}{\partial y} = -\frac{\partial p}{\partial y} + \frac{1}{Re} \nabla^2 \, v</script>
+
+<script type="math/tex; mode=display">\frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} = 0</script>
+
+<p>Which can be written in its discrete version as</p>
+
+<script type="math/tex; mode=display">\frac{\partial q}{\partial t} = -\textbf{N}(q) - \textbf{G}\,p + \frac{1}{Re} \textbf{L} \, q + \frac{1}{Re} b</script>
+
+<script type="math/tex; mode=display">\textbf{D} \, q = 0</script>
+
+<h3 id="the-employed-numerical-scheme">The Employed Numerical Scheme.</h3>
+
+<p>The previous equation is known as the semi-discrete incompressible Navier-Stokes equations, and correspond to a DAE-index 2 system. In order to solve it,  we will employ the null-space approach. Basically we will take advantage of the fact that  <script type="math/tex">\textbf{D} \, q = \textbf{D} \, \textbf{C} \, s = 0</script>, and therefore we will multiply this equation by <script type="math/tex">\textbf{C}^T</script> and get</p>
+
+<script type="math/tex; mode=display">\textbf{C}^T \textbf{C} \frac{\partial s}{\partial t} = -\textbf{C}^T \, \textbf{N}(\textbf{C} \,s) + \frac{1}{Re} \textbf{C}^T \, \textbf{L} \, \textbf{C} \, s + \frac{1}{Re} \textbf{C} \,b \,.</script>
+
+<p>Note that the later equation eliminates the pressure term from momentum equation, and also mimetic the vorticity equation, now we are in position to employ an split Trapezoidal scheme for the viscous term, and a AB2 scheme for the advection term. In tis regard, we end up with the following system</p>
+
+<script type="math/tex; mode=display">\textbf{C}^T \left( \textbf{I} - \frac{\Delta t}{2 \, Re} \textbf{L} \right) \textbf{C} \;  \Delta s^n = \Delta t \; r^n \,,</script>
+
+<p>where</p>
+
+<script type="math/tex; mode=display">r^n = -\frac{3}{2} \textbf{C}^T \, \textbf{N}(\textbf{C} \,s^n) + \frac{1}{2} \textbf{C}^T \, \textbf{N}(\textbf{C} \,s^{n-1}) + \frac{1}{Re} \textbf{C}^T \, \textbf{L} \, \textbf{C} \, s^n + \frac{1}{Re} \textbf{C} \,b \,,</script>
+
+<p>and then, the stream-function is updated as</p>
+
+<script type="math/tex; mode=display">s^{n+1} = s^n + \Delta s^n</script>
+
+<p>The linear system will be solved using the operator <script type="math/tex">x = A \backslash b</script> in MATLAB. This operator uses different options depending on the structure of the given matrix. For instance, the CHOLMOD option is used for sparse symmetric positive definite matrices. If the matrix is sparse, symmetric, and indefinite, then it uses MA49 developed by Iain Duff. For general sparse square matrices it uses UMFPACK. For sparse rectangular matrices it uses SuiteSparseQR. Finally, for sparse matrices that are lower or upper triangular, or can be permuted into such, it uses a forward/back solver that exploits these properties.</p>
+
+<p>In our particular case the matrix <script type="math/tex">\textbf{A}</script> is given as</p>
+
+<script type="math/tex; mode=display">\textbf{A} = \textbf{C}^T \left( \textbf{I} - \frac{\Delta t}{2 \, Re} \textbf{L} \right) \textbf{C} \,.</script>
+
+<p>In order to know what option MATLAB is doing inside <script type="math/tex">A \backslash b</script> we can use the option <strong>spparms (‘spumoni’,3)</strong>, and to turn it off we use <strong>spparms (‘spumoni’,0)</strong>. In this regard, we notice that MATLAB uses <strong><em>CHOLMOD’s triangular solver</em></strong>. This option makes perfect sence, since the structure of the matrix <script type="math/tex">\textbf{A}</script> is not only sparse, but also symmetric and positive-definite.</p>
+
+<p>Now to see the efficiency of the CHOLMOD method, we will test it employing a mesh for the 2D lid-driven cavity problem with reasonable amount of grids points. In this analysis we have employed a grid of <script type="math/tex">1000 \times 1000</script> in a computer with the following characteristics:</p>
+
+<p><img src="/assets/img/Project4/Stats.png" alt="image-title-here" class="img-responsive" height="" width="650px" /></p>
+
+<p>The obtained CPU’s time are shown in Table 1. These values allow us to conclude that Matlab does use parallelization while it solves the linear systems, however there is an important overhead in transfering data back and forth which does not allow a noticeable speedup.</p>
+
+<p><img src="/assets/img/Project4/TableI.png" alt="image-title-here" class="img-responsive" height="" width="500px" /></p>
+
+<h3 id="the-2d-liddriven-cavity-problem">The 2D Lid–Driven Cavity Problem.</h3>
+
+<p>In this section, we will employ the code to solve the 2D lid–driven cavity flow with <script type="math/tex">L/H = 1</script> and <script type="math/tex">Re=100</script>, since it is known that a steady state solution can be achieved. We have considered <script type="math/tex">t_{sim} = 1000</script> to guarantee stationarity, <script type="math/tex">n_x = n_y = 51</script> points along <script type="math/tex">x</script> and <script type="math/tex">y</script> directions, and <script type="math/tex">\Delta t = 0.1</script>.</p>
+
+<p>Figure 1 represents the contours for the the stream–lines once the flow has reached the steady-state. We can see that they match reference <a href="#2">[2]</a>.</p>
+
+<p><img src="/assets/img/Project4/Figure03.png" alt="image-title-here" class="img-responsive" height="" width="350px" /></p>
+
+<p><em>Figure 1: Steady–stare contour streamline solution for the lid-driven cavity flow.</em></p>
+
+<p>Figure 2 compares the obtained results for the velocity field <script type="math/tex">u(0.5,y)</script>, and <script type="math/tex">v(x,0.5)</script> with the one presented in the literature for the case <script type="math/tex">Re = 100</script>.</p>
+
+<p><img src="/assets/img/Project4/Figure01.png" alt="image-title-here" class="img-responsive" height="" width="325px" />
+<img src="/assets/img/Project4/Figure02.png" alt="image-title-here" class="img-responsive" height="" width="325px" /></p>
+
+<p><em>Figure 2: (a) Velocity field: <script type="math/tex">u(x=0.5,y)</script>. (b) Velocity field: <script type="math/tex">v(x,y=0.5)</script>.</em></p>
+
+<p>Both Figures 1 and  2 agree very well with the one provided in reference <a href="#2">[2]</a>. This essentialy means that our solver is working perfectly.</p>
+
+<p>Since, we have made sure our solver is working properly, we are going to show the evolution of the lid-driven cavity flow for different Reynold’s numbers.</p>
+
+<p><img src="/assets/img/Project4/Re_1.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 3: Time evolution of the lid-driven cavity flow for <script type="math/tex">R_e = 1</script>.</em></p>
+
+<p><img src="/assets/img/Project4/Re_100.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 4: Time evolution of the lid-driven cavity flow for <script type="math/tex">R_e = 100</script>.</em></p>
+
+<p><img src="/assets/img/Project4/Re_1000.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 5: Time evolution of the lid-driven cavity flow for <script type="math/tex">R_e = 1000</script>.</em></p>
+
+<p><img src="/assets/img/Project4/Re_10000.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 6: Time evolution of the lid-driven cavity flow for <script type="math/tex">R_e = 10000</script>.</em></p>
+
+<p>The presented set of simulations for different Reynold’s number allows us to conclude that the stationary state depend strongly on this parameter. The smaller the Raynold number is the most likely that the flow will reached stationarity in a smaller period. For the analyzed cases, we see that stationarity is reached roughly when the simulation time is larger than the Reynolds number – not showed in the figures, but easily reproducible using the attached code in Matlab.</p>
+
+<p>Now, in order to demonstrate second-order spatio-temporal convergence, we will compare the solution of coarser meshes with a fine-mesh solution, i.e. <script type="math/tex">n_x = n_y = 500</script>. The error made for the stream-functions – aka <script type="math/tex">s(x,y)</script> – was computed for differents values of <script type="math/tex">n_x = n_y</script>. We have chosen the <script type="math/tex">L_2(\Omega)</script>-norm as measurement of the error over the domain, which is defined in the following manner</p>
+
+<script type="math/tex; mode=display">\| error \|_{L_2(\Omega)} = \sqrt{ \frac{1}{n_x} \frac{1}{n_y} \sum_{i=1}^{n_x}  \sum_{j=1}^{n_y} \| s(x_i,y_j) - \tilde{s}(x_i,y_j) \|^2}</script>
+
+<p>For this analysis we have chosen <script type="math/tex">n_x = n_y = 10</script>, <script type="math/tex">n_x = n_y = 20</script>, <script type="math/tex">n_x = n_y = 25</script>, <script type="math/tex">n_x = n_y = 50</script>, and <script type="math/tex">n_x = n_y = 100</script>.  Figure 7 shows that in fact, we get approximate second order spatio-temporal convergence.</p>
+
+<p><img src="/assets/img/Project4/Figure04.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 7: Second-order convergence of the Trapezoidal/AB2 scheme.</em></p>
+
+<h3 id="some-more-advanced-analysis">Some More Advanced Analysis.</h3>
+
+<p>We will consider other alternatives to solve the large system of equations that arise in our time march of the DAE system. In order to do this, we will fix a grid size, and we will compute the optimal time step to preserve accuracy. In this case we have chosen <script type="math/tex">n_x = n_y = 51</script>, <script type="math/tex">t_{sim} = 1000</script>, and <script type="math/tex">R_e = 100</script>.</p>
+
+<p><img src="/assets/img/Project4/TableII.png" alt="image-title-here" class="img-responsive" height="" width="500px" /></p>
+
+<p>Table 2 shows that the optimal <script type="math/tex">\Delta t</script> in terms of speed/efficiency for this case is <script type="math/tex">\Delta t = 0.5</script>. Obviously, the larger the time step, the faster the code will run because fewer iteration are needed to reach the simulated time.</p>
+
+<p>Next, to see if the code can be accelerated, we could attempt to employ another alternatives to solve the linear system,  since the performance of this code only depends on the speed of solving the linear system <script type="math/tex">x = A \backslash b</script>. We will explore several iterative alternatives to deal with this task. We are going to consider a mesh-grid with <script type="math/tex">n_x = n_y = 10, 100, 1000</script> points, and a tolerance of <script type="math/tex">10^{-6}</script> for convergence. The methods explored are the reconditioned conjugate gradients method (<strong>pcg</strong>), biconjugate gradients method (<strong>bicg</strong>), generalized minimum residual method (<strong>gmres</strong>), and minimum residual method (<strong>minres</strong>).</p>
+
+<p>The results of this extensive analysis are shown in Table 3.</p>
+
+<p><img src="/assets/img/Project4/TableIII.png" alt="image-title-here" class="img-responsive" height="" width="500px" /></p>
+
+<p>Table 3 shows that the faster routine is <strong>mldivide</strong>, which as we mentioned before, it  employs the <strong><em>CHOLMOD’s triangular solver</em></strong> which is the best option due to the structure of the provided <script type="math/tex">\textbf{A}</script> matrix. I have also tried to solve the system using a modified version of the <script type="math/tex">LU</script> factorization, provided in the appendix of this document, called <strong>luSolve(A,b)</strong> which requires a computing time of <script type="math/tex">31.28 \; [s]</script> for <script type="math/tex">n_x = n_y = 1000</script> points, which is not bad compared with the super–optimized <strong>mldivide</strong> routine implemented in Matlab.</p>
+
+<p>Finally, we will analyze the time marching method and estimate a time step restrictions by choosing different values of of <script type="math/tex">R_e</script> and <script type="math/tex">\Delta x</script>. For this analysis we will fix the Reynold’s number to be <script type="math/tex">R_e = 100</script>, so that our space discretization, aka <script type="math/tex">\Delta x</script>, will move from <script type="math/tex">0.1</script> to <script type="math/tex">0.01</script>. This discretization will allow us not only to change the time step, aka <script type="math/tex">\Delta t</script>, from <script type="math/tex">0.10</script> to <script type="math/tex">10.0</script> but also to see inestabilities in the scheme.</p>
+
+<p>The reults of this exhaustive analysis are shown in Figure 8. Here the solids red circles represents that the scheme was able to run the case for a long time, here <script type="math/tex">t_{sim} = 1000</script>, and the empty circle represents overflow of the method. The dashed blue line represents an approximate limit for this case.</p>
+
+<p><img src="/assets/img/Project4/Figure05.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 8: Time step restrictions of the Trapezoidal/AB2 scheme for <script type="math/tex">R_e = 100</script>.</em></p>
+
+<p>The same analysis can be done for several different Reynolds numbers, but for the sake of brevity, I have omited them. The behavior is cualitatively the same as the one presented in Figure 8.</p>
+
+<h3 id="references">References</h3>
+<p><a id="1">[1]</a> 
+Colonius, Tim.
+Lecture notes – Computational Fluid Dynamics
+California Institute of Technology, Fall 2016.</p>
+
+<p><a id="1">[2]</a> 
+U. Ghia, K.N. Ghia, and C.T. Shin. 
+High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method
+Journal of Computational Physics, 48:387–411, 1982.</p>
+
+<p><a id="1">[3]</a> 
+Ferziger, J.H, and Peri'c, M.
+Computational Methods for Fluid Dynamics
+3rd Edition, Springer.</p>
+
+  </article>
+
+  
+
+  
+
+</div>
+
+      </div>
+    </div>
+
+    <footer>
+
+  <div class="wrapper">
+    &copy; Copyright 2020 Danilo S. Kusanovic.
+    Powered by <a href="http://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+
+    
+  </div>
+
+</footer>
+
+
+    <!-- Load jQuery -->
+<script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<!-- Load Common JS -->
+<script src="/assets/js/common.js"></script>
+
+
+<!-- Load KaTeX -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+<script src="/assets/js/katex.js"></script>
+
+
+
+
+<!-- Include custom icon fonts -->
+<link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/assets/css/academicons.min.css">
+
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXXXXXX', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+  </body>
+
+</html>

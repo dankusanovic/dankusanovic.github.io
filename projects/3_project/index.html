@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Danilo S. Kusanovic | Project III</title>
+  <meta name="description" content="Added on [*folio](https://github.com/bogoli/-folio) design.
+">
+
+  
+
+  <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="canonical" href="/projects/3_project/">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    
+    <span class="site-title">
+        
+        <strong>Danilo</strong> Kusanovic
+    </span>
+    
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+      <div class="trigger">
+        <!-- About -->
+        <a class="page-link" href="/">about</a>
+
+        <!-- Blog -->
+        <a class="page-link" href="/blog/">blog</a>
+
+        <!-- Pages -->
+        
+          
+        
+          
+        
+          
+            <a class="page-link" href="/library/">Library</a>
+          
+        
+          
+        
+          
+            <a class="page-link" href="/projects/">Projects</a>
+          
+        
+          
+            <a class="page-link" href="/publications/">Publications</a>
+          
+        
+          
+            <a class="page-link" href="/teaching/">Teaching</a>
+          
+        
+          
+            <a class="page-link" href="/assets/pdf/CV.pdf">Vitae</a>
+          
+        
+          
+        
+          
+        
+
+        <!-- CV link -->
+        <!-- <a class="page-link" href="/assets/pdf/CV.pdf">vitae</a> -->
+
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Project III</h1>
+    <h5 class="post-description">A Matlab Galerkin spectral Fourier Method for Navier Stokes.</h5>
+  </header>
+
+  <article class="post-content Project III clearfix">
+    <p>The main objective of this project is to implement and use an spectral code to solve the two-dimensional, incompressible 
+Navier-Stokes equations in a periodic domain. We have chosen the Fourier collocation method to deal with this task. Basically, 
+we use the vorticity stream formulation for the implementation and then we compute the velocity field from the stream function. 
+The idea is to use our implementation to get a better understanding of the dependency on initial condition in the Navier-Stokes 
+equations as well as to study the convergence and stability of the employed numerical method.</p>
+
+<h3 id="the-incompressible-navierstokes-equation">The incompressible Navier–Stokes equation.</h3>
+<p>The dimensionless incompressible Navier–Stokes equation in its traditional form for solving the velocity field is given as 
+follows</p>
+
+<script type="math/tex; mode=display">\partial_t \textbf{u} + \textbf{u} \cdot \nabla \textbf{u} = \frac{1}{Re} \, \nabla^2 \textbf{u} \,,</script>
+
+<script type="math/tex; mode=display">\nabla \cdot \textbf{u} = 0 \,,</script>
+
+<p>where <script type="math/tex">Re</script> represents the Reynold’s number, and <script type="math/tex">\textbf{u}</script> the velocity field in two-dimensions which is given by <script type="math/tex">\textbf{u}(x,y)=\left[ u(x,y), v(x,y) \right]^T</script>.</p>
+
+<p>In order to derive the vorticity stream function for the Navier-Stokes equation in two dimensions, we apply the <script type="math/tex">curl</script> operator. The following procedure is a common way of deriving the vorticity equation. The vorticity is thus defined as</p>
+
+<script type="math/tex; mode=display">w = \nabla \times \textbf{u}  \,.</script>
+
+<p>We also know that the following vectorial identity holds</p>
+
+<script type="math/tex; mode=display">\frac{1}{2} \nabla \left( \textbf{u} \cdot \textbf{u} \right) = \left(\textbf{u} \cdot \nabla \right) \textbf{u} + \textbf{u} \times \left( \nabla \times \textbf{u} \right) \,,</script>
+
+<p>hence, for an scalar function <script type="math/tex">\phi(x,y)</script>  the following relation holds</p>
+
+<script type="math/tex; mode=display">\nabla \times \nabla \phi = 0 \,.</script>
+
+<p>Therefore re-writing the latter identity in terms of <script type="math/tex">\textbf{u}</script> and <script type="math/tex">w</script> we get</p>
+
+<script type="math/tex; mode=display">\nabla \times \left( \textbf{u} \times w \right) = \left( w \cdot \nabla \right) \textbf{u} - \left( \textbf{u} \cdot \nabla \right)w + \textbf{u} \nabla \cdot w - w\nabla \cdot \textbf{u} \,,</script>
+
+<p>where the last two terms vanish since <script type="math/tex">\nabla \cdot w = 0</script> and <script type="math/tex">\nabla \cdot \textbf{u} = 0</script>. Employing the above identities, we can transform the Navier-Stokes equation into</p>
+
+<script type="math/tex; mode=display">\partial_t \textbf{u} +  \frac{1}{2} \nabla \left( \textbf{u} \cdot \textbf{u} \right) - \textbf{u} \times \left( \nabla \times \textbf{u} \right)  = \frac{1}{Re} \, \nabla^2 \textbf{u} \,.</script>
+
+<p>We can take the <script type="math/tex">curl</script> on both sides of the equation. Using the identities previously mentioned, we get the <strong><em>vorticity equation</em></strong>:</p>
+
+<script type="math/tex; mode=display">\partial_t w + \left( \textbf{u} \cdot \nabla \right) w - \left( w \cdot \nabla \right) \textbf{u} = \frac{1}{Re} \, \nabla^2 \textbf{u} \,.</script>
+
+<p>This gives us the two–dimensional vorticity equation</p>
+
+<script type="math/tex; mode=display">\partial_t w = - \frac{1}{Re} \, \nabla^2 w - \nabla \left( w \, \textbf{u} \right)</script>
+
+<p>The above is the main equation we want to consider. This equation is a nonlinear advection diffusion equation. Once we can successfully solve for vorticity we solve for stream function <script type="math/tex">\psi(x,y)</script> which is defined as follows</p>
+
+<script type="math/tex; mode=display">w = -\nabla \psi</script>
+
+<h3 id="the-warm-up-steps-to-get-started">The Warm-up Steps to Get Started.</h3>
+
+<p>This section’s purpose is to make the end job easier by setting-up several simple tasks. In order to achieve this purpose, we are going to emply Matlab as our programming environment; therefore, we do not need to install any Fast Fourier Transform (FFT)  package, since the built-in function <strong><em>fft()</em></strong> carries out this task.</p>
+
+<p>In order to understand how the <strong><em>fft()</em></strong> function works in Matlab, let us first define the following analytical function</p>
+
+<script type="math/tex; mode=display">g(x) = \exp\left(-a x^2 \right)</script>
+
+<p>Now, let us compute the continuous Fourier transform over the real interval defined when <script type="math/tex">x \in \left[-\infty,\infty \right]</script> for <script type="math/tex">g(x)</script> as follows</p>
+
+<script type="math/tex; mode=display">\tilde{g}(k) = \int_{-\infty}^{\infty} \exp\left(-a x^2 \right) \exp\left(-2 \pi i \,  k x\right)\, dx = \frac{1}{2\sqrt{\pi a}}\exp\left(-\frac{k^2}{4 a} \right)</script>
+
+<p>If we consider the values <script type="math/tex">a = 0.5</script>, <script type="math/tex">N = 64</script>, and a windows <script type="math/tex">x \in \left[ -\pi,\pi \right]</script> for <script type="math/tex">\tilde{g}(k)</script>, we can plot the discrepancy between continuous Fourier transform, and the discrete fourier transform. Figure 1 shows in fact this results.</p>
+
+<p><img src="/assets/img/Project3/WarmUp01.png" alt="image-title-here" class="img-responsive" height="" width="500px" /></p>
+
+<p><em>Figure 1: (a) The analytical function <script type="math/tex">g(x)</script>, (b) The Fourier coefficients comparison.</em></p>
+
+<p>Now we are in position of changing the values of <script type="math/tex">N</script> and <script type="math/tex">a</script>, and by comparison of the coefficients for the two functions and their analytical counterpart, we will isolate and evaluate three potential errors: truncation of the Fourier coefficients, sampling/aliasing, and non-periodicity errors.</p>
+
+<p>To meassure the error, we have chosen the <script type="math/tex">L_2(\Omega)</script>-norm  defined as</p>
+
+<script type="math/tex; mode=display">\| g(k) \|_{L_2(\Omega)} = \sqrt{ \frac{1}{N} \sum_{i=1}^{N} \| g(k_i) - \tilde{g}(k_i) \|^2}</script>
+
+<p>Table 1 summarizes these findings.</p>
+
+<p><img src="/assets/img/Project3/TableI.png" alt="image-title-here" class="img-responsive" height="" width="550px" /></p>
+
+<p>Table 1 shows that the <strong><em>truncation error</em></strong> comes from the fact of employing an small number <script type="math/tex">N</script>. That is why we see for a given <script type="math/tex">a</script>, the error decreases if the number of ampling points <script type="math/tex">N</script> increases.</p>
+
+<p>On the other hand, since sampling is the process of discretizing the domain of a continuous function to produce a discrete function, it is not surprising that if the sampling rate is too low, information is lost and the continuous funtion is not uniquely determined by the samples. This kind of phenomenon is called <strong><em>aliasing error</em></strong> and that is why we see that the error decreases faster when the value of <script type="math/tex">a</script> is much larger because we need to sample more.</p>
+
+<p>Now, to make things a bit more interesting, let us consider the following analytic two-dimensional function</p>
+
+<script type="math/tex; mode=display">g(x,y) = \exp\left(-a \left( x^2 +y^2\right) \right)</script>
+
+<p>The Fourier coefficients of <script type="math/tex">g(x,y)</script> are computed in the following manner</p>
+
+<script type="math/tex; mode=display">\tilde{g}(j,k) = \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} \exp\left(-a \left( x^2 + y^2 \right) \right) \exp\left(-2 \pi i \left( j x + ky \right) \right)  \, dx \,dy</script>
+
+<script type="math/tex; mode=display">\quad \quad \quad = \frac{1}{4 \pi a}\exp\left(-\frac{\pi^2}{4a}\left( j^2 + k^2\right) \right)</script>
+
+<p>For numerical visualization, let us compare the coefficients obtained using the analytical expression and the one obtained using <strong><em>fft2()</em></strong> in Matlab. For this purpose, we considered the values <script type="math/tex">a = 2.5</script>, <script type="math/tex">N = 128</script> over the domain <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>.</p>
+
+<p><img src="/assets/img/Project3/WarmUp03.png" alt="image-title-here" class="img-responsive" height="" width="600px" /></p>
+
+<p><em>Figure 2: Fourier coefficients comparison.</em></p>
+
+<p>Now we could also compute the error made in the coefficients for differents values of <script type="math/tex">N</script> and <script type="math/tex">a</script>. Once again, we have chosen the <script type="math/tex">L_2(\Omega)</script>-norm as measurement of the error over the domain.</p>
+
+<script type="math/tex; mode=display">\| g(j,k) \|_{L_2(\Omega)} = \sqrt{ \frac{1}{N} \frac{1}{N} \sum_{i=1}^{N}  \sum_{l=1}^{N} \| h(j_i,k_l) - \tilde{h}(j_i,k_l) \|^2}</script>
+
+<p>Table 2 summarizes these findings.</p>
+
+<p><img src="/assets/img/Project3/TableII.png" alt="image-title-here" class="img-responsive" height="" width="550px" /></p>
+
+<p>Table 2 again shows that the <strong><em>truncation error</em></strong> is decreased when a larger number of sampling points <script type="math/tex">N</script> is employed. Morever, the <strong><em>aliasing error</em></strong> also decreases faster when the value of <script type="math/tex">a</script> is larger.</p>
+
+<p>At this point, we are in possition to write our first Fourier-spectral solver for the (vorticity-stream function) Poisson equation:</p>
+
+<script type="math/tex; mode=display">\frac{\partial^2 \psi}{\partial x^2} + \frac{\partial^2 \psi}{\partial y^2} = -w  \,,</script>
+
+<p>here <script type="math/tex">w(x,y)</script> was provided in the appendix of this project. The analytical Taylor vortex function for this particular case is</p>
+
+<script type="math/tex; mode=display">w(x,y) = \left( 1 - \frac{x^2 + y^2}{2}\right) \exp\left( \frac{1}{2} \left( 1 - x^2 - y^2\right) \right) \,.</script>
+
+<p>The analytic solution for <script type="math/tex">\psi(x,y)</script> can be obtained by means of integration  of the provided expression</p>
+
+<script type="math/tex; mode=display">\psi(x,y) = -\exp\left( \frac{1}{2} \left( 1 - x^2 - y^2\right) \right) \,.</script>
+
+<p>The domain is considered periodic over the domain <script type="math/tex">(x,y) \in \left[-2\pi,2\pi\right]^2</script>. Now, we assume that the solution of <script type="math/tex">\psi(x,y)</script> can be written as follows</p>
+
+<script type="math/tex; mode=display">\psi(x,y) = \sum_{j=-M/2}^{M/2-1} \sum_{k=-M/2}^{M/2-1} \tilde{\psi}_{jk} \exp \left( 2 \pi i \left( jx + ky \right) \right) \,.</script>
+
+<p>Replacing equation previous equation into the Poisson’s equation, we obtain</p>
+
+<script type="math/tex; mode=display">\left( \epsilon_x^2 + \epsilon_y^2 \right) \tilde{\psi}_{jk} = \tilde{w}_{jk} \,,</script>
+
+<p>here <script type="math/tex">\epsilon_x = 2 \pi i/M</script>, and <script type="math/tex">\epsilon_y = 2 \pi i/M</script>. Solving for the coefficients <script type="math/tex">\tilde{\psi}_{jk}</script>, we are in position to get back to the physical domain using the <strong><em>ifft2()</em></strong> function in Matlab. Figure 3 shows the results obtained considering <script type="math/tex">M=256</script>.</p>
+
+<p><img src="/assets/img/Project3/WarmUp04.png" alt="image-title-here" class="img-responsive" height="" width="650px" /></p>
+
+<p><em>Figure 3: Fourier-spectral solver for the Poisson equation.</em></p>
+
+<p>To measure quantitatively the error made by truncation and alaising, we have employed the <script type="math/tex">L_2</script>-norm. Table 3 summarizes these findings.</p>
+
+<p><img src="/assets/img/Project3/TableIII.png" alt="image-title-here" class="img-responsive" height="" width="550px" /></p>
+
+<p>Table 3 shows that the error decreases when a larger number <script type="math/tex">N</script> is employed, this is basically because the approximation becomes more accurate since the error made by truncation is smaller, and the alaising component was taken care by increasing the size of the domain.</p>
+
+<p>The last task of this warm-up will be to write a program to evaluate the discrete Fourier coefficients of products of functions. For the sake of simplicity, we will use <script type="math/tex">g(x,y)=\exp\left(-q\left(x^2+y^2\right)\right)</script> multiplied by itself, since we can evaluate the exact fourier coefficients of this new function <script type="math/tex">h(x,y)</script> analytically.</p>
+
+<p>The Fourier coefficients of <script type="math/tex">h(x,y) = g^2(x,y)</script> are computed as follows</p>
+
+<script type="math/tex; mode=display">\tilde{h}(j,k) = \frac{1}{8 \pi a}\exp\left(-\frac{\pi^2}{8a}\left( j^2 + k^2\right) \right)</script>
+
+<p>For numerical visualization, let us compare the coefficients obtained using the analytical expression <script type="math/tex">\tilde{h}(j,k)</script> and the one obtained using the di-aliased method. For this purpose, we considered the values <script type="math/tex">a = 1.0</script>, <script type="math/tex">N = 128</script> over the domain <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>.</p>
+
+<p><img src="/assets/img/Project3/WarmUp05.png" alt="image-title-here" class="img-responsive" height="" width="600px" /></p>
+
+<p><em>Figure 4: Di–Aliased Fourier coefficients for <script type="math/tex">\tilde{h}(j,k)</script>.</em></p>
+
+<p>Now we could also compute the error made in the coefficients for differents values of <script type="math/tex">N</script> and <script type="math/tex">a</script>. Once again, we have chosen the <script type="math/tex">L_2(\Omega)</script>-norm as measurement of the error over the domain. This result is summarized in Table 4.</p>
+
+<p><img src="/assets/img/Project3/TableIV.png" alt="image-title-here" class="img-responsive" height="" width="550px" /></p>
+
+<h3 id="the-employed-numerical-scheme">The Employed Numerical Scheme.</h3>
+<p>We use Fourier-spectral method for solving the incompresible Navier–Stokes equations</p>
+
+<script type="math/tex; mode=display">\partial_t w = - \frac{1}{Re} \, \nabla^2 w - \nabla \left( w \, \textbf{u} \right) \,,</script>
+
+<p>so if we assume that the solution of this equation can be writen as</p>
+
+<script type="math/tex; mode=display">\psi(x,y,t) = \sum_{j=-M/2}^{M/2-1} \sum_{k=-M/2}^{M/2-1} \tilde{\psi}_{jk}(t) \exp \left( 2 \pi i \left( jx + ky \right) \right) \,,</script>
+
+<p>and, if we replace it into the the vorticity equation, we get</p>
+
+<script type="math/tex; mode=display">\frac{\partial}{\partial t} \tilde{w}_{jk} = - \frac{1}{Re} \left( \epsilon_x^2 + \epsilon_y^2 \right) \tilde{w}_{jk} - \left( \epsilon_x \; \tilde{u} \cdot \tilde{w} \right)_{jk}  - \left( \epsilon_y \; \tilde{v} \cdot \tilde{w} \right)_{jk} \,,</script>
+
+<p>where</p>
+
+<script type="math/tex; mode=display">\epsilon_x = \frac{2 \pi \, i}{M} \,,</script>
+
+<script type="math/tex; mode=display">\epsilon_y = \frac{2 \pi \, i}{N} \,,</script>
+
+<script type="math/tex; mode=display">\tilde{\psi}_{jk} =  \frac{ \tilde{w}_{jk}}{\alpha^2 \, j^2 + \beta^2 \, k^2} \,,</script>
+
+<script type="math/tex; mode=display">\tilde{u}_{jk}    =  \frac{ i \, \beta  k \tilde{w}_{jk}}{\alpha^2 \, j^2 + \beta^2 \, k^2} \,,</script>
+
+<script type="math/tex; mode=display">\tilde{v}_{jk}    = -\frac{ i \, \alpha j \tilde{w}_{jk}}{\alpha^2 \, j^2 + \beta^2 \, k^2} \,,</script>
+
+<p>The right hand side of <script type="math/tex">\frac{\partial}{\partial t} \tilde{w}_{jk}</script> can be solved using discrete Fourier transform on the grid points as it was done in the warm-up section. We have used the <strong><em>fft2()</em></strong> algorithm implemented in Matlab to solve the right hand side. For time evolution we have implemented the Runge–Kutta fourth–order implicit method.</p>
+
+<p>We also have to take care of the aliasing problem by throwing out the frequencies in the convective term <script type="math/tex">\nabla \left( w \, \textbf{u} \right)</script> employing the method specified in the warm–up. This procedure is implemented in the function <strong><em>DiAliasedFunction()</em></strong> for more details.</p>
+
+<h3 id="algorithm-and-convergence">Algorithm and Convergence.</h3>
+
+<p>In order to <strong><em>empirically determine the stability bounds</em></strong> of the time marching scheme, we will initialize the Fourier coefficients to random complex numbers. We will also run several cases with different values of time step <script type="math/tex">\Delta t</script>, grid spacing <script type="math/tex">h</script>, and <strong><em>Reynold</em></strong> numbers, and then we will compare them with the stability limits for the <script type="math/tex">RK4</script> integration sheme provided bellow:</p>
+
+<script type="math/tex; mode=display">\Delta t_{max} = \min \left( \frac{2.8 \, h}{\pi \, V_{max}} , \frac{2.8 \, Re \, h^2}{\pi^2} \right) \,.</script>
+
+<p>The physical domain was taken as <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>. We have considered the discretization in the Reynold numbers to be <script type="math/tex">0.01</script>, and <script type="math/tex">100</script>. For the grid spacing, the number of sampling points <script type="math/tex">N</script> was taken to be uniform in both directions and equal to <script type="math/tex">4</script>, <script type="math/tex">8</script>, <script type="math/tex">32</script>, <script type="math/tex">64</script>, <script type="math/tex">128</script>, <script type="math/tex">256</script>, <script type="math/tex">512</script>, and <script type="math/tex">1024</script>. Finally, for the time step <script type="math/tex">\Delta t</script>, we employed the values <script type="math/tex">1.0</script>, <script type="math/tex">0.1</script>, <script type="math/tex">0.01</script>, <script type="math/tex">0.001</script>, <script type="math/tex">0.0001</script>.</p>
+
+<p>The reults of this exhaustive analysis are shown in Figure 5 and 6. Here the solids black circles represents that the scheme was able to run the case for a long time, here <script type="math/tex">t_{sim} = 12.5</script>, and the empty circle represents overflow of the method.</p>
+
+<p><img src="/assets/img/Project3/Algorithm01a.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 5: Empirical determination of <script type="math/tex">\Delta t</script> for <script type="math/tex">Re = 0.01</script>.</em></p>
+
+<p><img src="/assets/img/Project3/Algorithm01b.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 6: Empirical determination of <script type="math/tex">\Delta t</script> for <script type="math/tex">Re = 100.0</script>.</em></p>
+
+<p>We see clearly, that the bound specified for <script type="math/tex">\Delta t_{max}</script> agrees very well the convergence criterion for selecting the time step.</p>
+
+<p>Next, to <strong><em>demonstrate convergence to an exact solution</em></strong>, we will compute the solution for the Taylor vortex for relatively short times, so that our solution should be very close to the exact solution.</p>
+
+<p>First, we will hold the time-step constant, here <script type="math/tex">t = 0.001</script> but small enough so that the error is dominated by the spatial discretization. The spatial domain was taken to be <script type="math/tex">(x,y) = \left[ -2 \pi,2 \pi\right]^2</script>, and the simulation time <script type="math/tex">t_{sim} = 1.5</script>. The spectral convergence is shown in Figure 7. We see clearly that while the amount of grid ponts <script type="math/tex">N</script> is increased, the error accordingly decreases very fast as expected.</p>
+
+<p><img src="/assets/img/Project3/Algorithm02a.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 7: The spectral convergence Fourier-spectral scheme.</em></p>
+
+<p>Second to show the fourth-order convergence of the Runge-Kutta scheme, we will decrease the time step in proportion to the grid spacing. Since the spectral discretization error decreases rapidly for sufficiently large meshes, we expect to be able to see this behavior with some difficulties since the machine presition is reached very fast due to the spectral behavior of the method.</p>
+
+<p><img src="/assets/img/Project3/Algorithm02b.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 8: Fourth-order convergence of the Runge-Kutta scheme.</em></p>
+
+<p>In Figure 8, we have considered <script type="math/tex">N</script> to be <script type="math/tex">128</script>, <script type="math/tex">136</script>, <script type="math/tex">144</script>, <script type="math/tex">192</script>, and <script type="math/tex">256</script>, the time steps <script type="math/tex">\Delta t</script> were taken as <script type="math/tex">0.15</script>, <script type="math/tex">0.065</script>, <script type="math/tex">0.010</script>, <script type="math/tex">0.0055</script>, and <script type="math/tex">0.0015</script>, the error was meassured employing the <script type="math/tex">L_2</script>-norm as usual. We see in Figure 8 that we almost get the fourth-order convergence <script type="math/tex">\sim 3.7</script>, the variation in the slope might be related to the lack of presition in the last values of <script type="math/tex">N</script>.</p>
+
+<p>Finally, to demonstrate the <strong><em>spatial convergence to a numerical solution</em></strong> on a very fine grid, we compute a reference solution which is a ultra-fine mesh in time and space, and then we compare the solution on coarser meshes. In this analysis we have employed <script type="math/tex">N = 2000</script>, and <script type="math/tex">\Delta t = 0.0001</script>. We expect that the differences between the coarser mesh solutions is sufficiently large that the difference between the fine mesh and the exact solutions are insignificant.</p>
+
+<p>Figure 9 shows in a log-linear scale the decrease in the error as <script type="math/tex">N</script> increases. It is important to point out that the coefficient obtained in this regard (<script type="math/tex">0.22</script>) is less than the one specified in the project, however this analysis still confirms the spectral nature of this method.</p>
+
+<p><img src="/assets/img/Project3/Algorithm03.png" alt="image-title-here" class="img-responsive" height="" width="400px" /></p>
+
+<p><em>Figure 9: Spatial convergence to a numerical solution.</em></p>
+
+<p>We have employed in this analysis <script type="math/tex">N</script> to be <script type="math/tex">50</script>, <script type="math/tex">100</script>, and <script type="math/tex">200</script>. The spatial domain was taken to be <script type="math/tex">(x,y) = \left[ -2 \pi,2 \pi\right]^2</script>, and the simulation time was fixed at  <script type="math/tex">t_{sim} = 1.0</script>.</p>
+
+<h3 id="some-interesting-selected-examples">Some Interesting Selected Examples.</h3>
+
+<p>Let us start <strong><em>Dynamics of a co-rotating vortex pair</em></strong>. We will initialize two Taylor vortices with core size <script type="math/tex">c = \pi/10</script>, equal maximum velocity, and separated by a distance <script type="math/tex">d = \pi/6</script>. This setting will allow the two vortex to form a single (wobbly) vortex. Figure 10 shows the evolution of this phenomenon</p>
+
+<p><img src="/assets/img/Project3/Fun01.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 10: Dynamics of a co-rotating vortex pair.</em></p>
+
+<p>In order to generate Figure 10 we have considered the domain to be <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>, the number os sampling points <script type="math/tex">N = 256</script>, the maximum time step <script type="math/tex">\Delta t = 0.005</script>, and the Reynold’s number <script type="math/tex">Re = 350</script>.</p>
+
+<p>Next, we will check the stability of a <strong><em>Periodic array of vortices</em></strong>. In order to do this, we will initialize the domain with a doubly-periodic array of alternating sign vortices. We expect that if there are no external disturbances that break the symmetry, the vortices should be stationary and simply diffuse in time. This is in fact was is shown in Figure 11</p>
+
+<p><img src="/assets/img/Project3/Fun02.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 11: Evolution of a periodic array of vortices</em></p>
+
+<p>In order to generate Figure 11 we have considered the domain to be <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>, the number os sampling points <script type="math/tex">N = 256</script>, the maximum time step <script type="math/tex">\Delta t = 0.005</script>, the Reynold’s number <script type="math/tex">Re = 350</script>.</p>
+
+<p>Next, we consider the <strong><em>Two-dimensional turbulence</em></strong>. We will initialize our domain with Fourier coefficients of equal magnitude – for this case we have employed the amplitud to be one – but randomly chosen phases. We also excited only the portion of wavenumbers in the range of <script type="math/tex">\mid \alpha \mid \leq M/4</script> , <script type="math/tex">\mid \beta \mid \leq N/4</script>. Figure 12 shows the evolution of this case.</p>
+
+<p><img src="/assets/img/Project3/Fun03.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 12: Evolution of a two-dimensional turbulence.</em></p>
+
+<p>In order to generate Figure 12 we have considered the domain to be <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>, the number os sampling points <script type="math/tex">N = 256</script>, the maximum time step was taken as <script type="math/tex">\Delta t = 0.005</script>, the simulation time <script type="math/tex">t_{sim} = 12.50</script>, and the Reynold’s number <script type="math/tex">Re = 350</script>.</p>
+
+<p>Finally, we will study the <strong><em>Temporally evolving jet</em></strong>. In order to accomplish this task, we will create two equal and opposite mixing layers separated by a distance <script type="math/tex">a = \pi</script>. We have also added some perturbations to observe the Kelvin-Helmholtz instability shown in Figure 13.</p>
+
+<p><img src="/assets/img/Project3/Fun04.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 13: Temporally evolving jet.</em></p>
+
+<p>In order to generate Figure 13 we have considered the domain to be <script type="math/tex">(x,y) \in \left[-\pi,\pi\right]^2</script>, the number os sampling points <script type="math/tex">N = 256</script>, the maximum time step <script type="math/tex">\Delta t = 0.005</script>, the Reynold’s number <script type="math/tex">Re = 350</script>. We have also employed a little noise, which was added to the initial condition, as a uniform random variable of amplitude 0.01.</p>
+
+<h3 id="references">References</h3>
+<p><a id="1">[1]</a> 
+Colonius, Tim.
+Lecture notes – Computational Fluid Dynamics
+California Institute of Technology, Fall 2016.</p>
+
+<p><a id="1">[2]</a> 
+Ferziger, J.H, and Peri'c, M.
+Computational Methods for Fluid Dynamics
+3rd Edition, Springer.</p>
+
+  </article>
+
+  
+
+  
+
+</div>
+
+      </div>
+    </div>
+
+    <footer>
+
+  <div class="wrapper">
+    &copy; Copyright 2020 Danilo S. Kusanovic.
+    Powered by <a href="http://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+
+    
+  </div>
+
+</footer>
+
+
+    <!-- Load jQuery -->
+<script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<!-- Load Common JS -->
+<script src="/assets/js/common.js"></script>
+
+
+<!-- Load KaTeX -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+<script src="/assets/js/katex.js"></script>
+
+
+
+
+<!-- Include custom icon fonts -->
+<link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/assets/css/academicons.min.css">
+
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXXXXXX', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+  </body>
+
+</html>

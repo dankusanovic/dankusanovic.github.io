@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Danilo S. Kusanovic | Project II</title>
+  <meta name="description" content="Added on [*folio](https://github.com/bogoli/-folio) design.
+">
+
+  
+
+  <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="canonical" href="/projects/2_project/">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    
+    <span class="site-title">
+        
+        <strong>Danilo</strong> Kusanovic
+    </span>
+    
+
+    <nav class="site-nav">
+      <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+      <div class="trigger">
+        <!-- About -->
+        <a class="page-link" href="/">about</a>
+
+        <!-- Blog -->
+        <a class="page-link" href="/blog/">blog</a>
+
+        <!-- Pages -->
+        
+          
+        
+          
+        
+          
+            <a class="page-link" href="/library/">Library</a>
+          
+        
+          
+        
+          
+            <a class="page-link" href="/projects/">Projects</a>
+          
+        
+          
+            <a class="page-link" href="/publications/">Publications</a>
+          
+        
+          
+            <a class="page-link" href="/teaching/">Teaching</a>
+          
+        
+          
+            <a class="page-link" href="/assets/pdf/CV.pdf">Vitae</a>
+          
+        
+          
+        
+          
+        
+
+        <!-- CV link -->
+        <!-- <a class="page-link" href="/assets/pdf/CV.pdf">vitae</a> -->
+
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Project II</h1>
+    <h5 class="post-description">A GPU implementation of the Shallow Water Equations.</h5>
+  </header>
+
+  <article class="post-content Project II clearfix">
+    <p>This project essentially speedup the <strong><em>Shallow Water Equations</em></strong> (SWE) on Graphic processors (GPU). The numerical implementation of the SWE is taken form <a href="#1">[1]</a> and <a href="#4">[4]</a>. The chosen method employs a very efficient finite volume algorithm which has not only the characteristic to be robust, and accurate, but also it is implemented in non-structured triangular mesh.</p>
+
+<p>In general, method that solves the SWE must fulfill both the well-balanced property (this means must not generate synthetic perturbations for lake at rest conditions), and must preserve the positivity preserving property for the water depth, this means the water column must be always positive <a href="#1">[1]</a>.</p>
+
+<p>Because of the previous reasons, an improved first-order central-upwind is chosen, see <a href="#2">[2]</a>, which in contrast to their predecessors, is able to preserve the lake at rest conditions and the positivity water level <a href="#3">[3]</a>, employing a variable time step to increase the convergence in time. Moreover, in order to increase the stability of the method, it is necessary to increase the resolution of the mesh in coastal areas. This is carried out by employing a non-structured mesh. To fulfill these equirements triangular elements were employed.</p>
+
+<h3 id="model-definition">Model Definition.</h3>
+<p>In this section, it will be defined the main variables that are going to be employed during this document. We will use normal variables <script type="math/tex">q</script> as scalar, while in bold <script type="math/tex">\mathbf{q}</script> as vectors, i.e., we will have <script type="math/tex">\mathbf{q} = (q_1, q_2, q_3)^\top</script> as a vector of conserved variables.</p>
+
+<p><img src="/assets/img/Project2/Fig001.png" alt="image-title-here" class="img-responsive" height="" width="700px" />
+<em>Figure 1: Main variables (states) of the shallow water equations.</em></p>
+
+<p>where the variables represented in the figure are: <script type="math/tex">w(x,y,t)</script> the surface elevation,  measured from mean sea level to the water level. <script type="math/tex">h(x,y,t)</script> the water depth which is measured from the bed elevation to the water surface. <script type="math/tex">u(x,y,t)</script> the velocity field along <script type="math/tex">x</script>-direction, and <script type="math/tex">v(x,y,t)</script> the velocity field along <script type="math/tex">y</script>-direction. <script type="math/tex">B(x,y)</script> represents the bathymetry. It is measured from the mean sea level to the bottom floor. In addition, there are other associated variables <script type="math/tex">hu(x,y,t)</script> is the flux-discharge along <script type="math/tex">x</script>-direction, and <script type="math/tex">hv(x,y,t)</script> is the flux-discharge along <script type="math/tex">y</script>-direction.</p>
+
+<h3 id="the-shallow-water-equations">The Shallow Water Equations.</h3>
+
+<p>Assuming hydrostatic pressure condition, the SWE are obtained by integrating the Navier-Stokes equations over the water depth. A system of bi-dimensional equations is obtained, where the horizontal velocities are an average of the velocity along the water column. Neglecting the kinematic and turbulent terms, the SWE can be written as:</p>
+
+<script type="math/tex; mode=display">h_t + (hu)_x + (hv)_y = 0 \,,</script>
+
+<script type="math/tex; mode=display">(hu)_t + \left(hu^2 + \frac{1}{2} g h^2 \right)_x + (huv)_y    = -g h B_x - g n^2 \frac{(hu) \sqrt{(hu)^2 + (hv)^2}}{h^{7/3}} \,,</script>
+
+<script type="math/tex; mode=display">(hv)_t + (huv)_x  + \left( hv^2 + \frac{1}{2} g h^2 \right)_y  = -g h B_y - g n^2 \frac{(hv) \sqrt{(hu)^2 + (hv)^2}}{h^{7/3}} \,,</script>
+
+<p>The first equation represents the mass balance due to the change of water height of the water column in a certain point, and the last two represent the moment balance due to the change in the discharge with the weight of the eater column, the bathymetry source, and the bottom friction’s force, etc. This set of equations can be written down on its conserved vector form as follows:</p>
+
+<script type="math/tex; mode=display">\frac{\partial \mathbf{q}}{\partial t} + \frac{\partial \mathbf{f}(\mathbf{q}) }{\partial x} + \frac{\partial \mathbf{g}(\mathbf{q}) }{\partial y} = \mathbf{S}(\mathbf{q}) + \mathbf{R}(\mathbf{q}) \,,</script>
+
+<p>where the previous vector variables are:</p>
+
+<script type="math/tex; mode=display">\mathbf{q}  = \left[ h,  hu,  hv \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{f}(\mathbf{q}) = \left[ hu, hu + \frac{1}{2}gh^2, huv \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{g}(\mathbf{q}) = \left[ hv, huv, hv + \frac{1}{2}gh^2 \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{S}(\mathbf{q}) = \left[ 0, -gh \frac{\partial B}{\partial x}, -gh \frac{\partial B}{\partial y} \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{R}(\mathbf{q}) = \left[ 0, g n^2 \frac{(hu) \sqrt{(hu)^2 + (hv)^2}}{h^{7/3}}, g n^2 \frac{(hv) \sqrt{(hu)^2 + (hv)^2}}{h^{7/3}} \right]^\top \,,</script>
+
+<p>and <script type="math/tex">\mathbf{S}(\mathbf{q})</script> represents the source term, <script type="math/tex">\mathbf{R}(\mathbf{q})</script> represents the bottom friction term, and <script type="math/tex">n</script> is the Manning’s roughness coefficient.</p>
+
+<h3 id="the-finite-volume-method">The Finite Volume Method.</h3>
+
+<p>The finite volume method is employed in order to solve the SWE. First, the flux-field will be written in its vector form as: <script type="math/tex">\overrightarrow{\mathbf{F}}(\mathbf{q}) = (\mathbf{f},\mathbf{g})</script>. Then, we have</p>
+
+<script type="math/tex; mode=display">\frac{\partial \mathbf{q}}{\partial t} + \nabla \cdot \overrightarrow{\mathbf{F}}(\mathbf{q}) = \mathbf{S}(\mathbf{q}) + \mathbf{C}(\mathbf{q}) + \mathbf{R}(\mathbf{q}) \,.</script>
+
+<p>Integrating by part over a finite triangular control volume <script type="math/tex">\Omega</script>, we get:</p>
+
+<script type="math/tex; mode=display">\iint_{\Omega} \frac{\partial \mathbf{q}}{\partial t} \; d \Omega + \iint_{\Omega} \nabla \cdot \overrightarrow{\mathbf{F}}(\mathbf{q}) \; d \Omega= \iint_{\Omega} \left( \mathbf{S}(\mathbf{q}) + \mathbf{C}(\mathbf{q}) + \mathbf{R}(\mathbf{q}) \right) \; d \Omega \,.</script>
+
+<p>Applying the Stokes’ theorem to a finite triangular element, we obtain:</p>
+
+<script type="math/tex; mode=display">\frac{\partial \mathbf{q}}{\partial t} \cdot \Omega + \oint_{\Gamma} \mathbf{F}(\mathbf{q}) \cdot \overrightarrow{n} \; d \Gamma = \mathbf{S}(\mathbf{q}) \cdot \Omega + \mathbf{C}(\mathbf{q}) \cdot \Omega + \mathbf{R}(\mathbf{q}) \cdot \Omega \,,</script>
+
+<p>where <script type="math/tex">\Omega</script> is the control volume, <script type="math/tex">\Gamma</script> is the boundary of the control volume, <script type="math/tex">\overrightarrow{n}</script> is the outward normal vector on the side, and <script type="math/tex">\mathbf{F}(\mathbf{q})</script> is the normal flux to the edge of each side of the control volume.</p>
+
+<p>Employing the Euler’s method to discretize the temporal variable, we get:</p>
+
+<script type="math/tex; mode=display">\mathbf{q}_j^{m+1} = \mathbf{q}_j^{m} - \frac{\Delta t}{\Delta \Omega_j} \sum_{k=1}^{3} \mathbf{F}_{jk}(\mathbf{q}^{m}) \cdot n_{jk} \cdot l_{jk} + \Delta t \cdot \mathbf{S}_j(\mathbf{q}^{m}) \,,</script>
+
+<p>where <script type="math/tex">n_{jk}</script> is the normal vector to the <script type="math/tex">k^{th}</script> mid-point side of the <script type="math/tex">j^{th}</script> triangle, <script type="math/tex">\Delta t</script> is the time step, <script type="math/tex">\Delta \Omega_j</script> is the control volume for the <script type="math/tex">j^{th}</script> triangle, <script type="math/tex">l_{jk}</script> is the length of the <script type="math/tex">k^{th}</script> side of the <script type="math/tex">j^{th}</script> triangle, and <script type="math/tex">\mathbf{q}_j^{m}</script> is the vector of conserved variables for the <script type="math/tex">j^{th}</script> triangle at the <script type="math/tex">m^{th}</script> time step.</p>
+
+<p>Terms such as the bottom friction and Coriolis’ force can be incorporated employing a semi-implicit discretization:</p>
+
+<script type="math/tex; mode=display">\mathbf{C}(\mathbf{q}) + \mathbf{R}(\mathbf{q}) \approx  H(\mathbf{q}^{m+1}) \cdot \mathbf{q}^{m+1} \,.</script>
+
+<p>In this regard, the friction and the Coriolis terms can be incorporated correcting the vector of conserved variables:</p>
+
+<script type="math/tex; mode=display">\mathbf{q}_j^{m+1} = \frac{\mathbf{q}_j^{m+1}}{1 + \Delta t \cdot H(\mathbf{q}_j^{m+1})} \,.</script>
+
+<h3 id="firstorder-semidiscrete-central-upwind">First–Order Semi–Discrete Central Upwind.</h3>
+
+<p>The <strong>First–order semi–discrete central–upwind</strong> method is employed to solve the discrete form of the Sallow Water Equations. we use as a reference the scheme depicted in the figure bellow:</p>
+
+<p><img src="/assets/img/Project2/Fig002.png" alt="image-title-here" class="img-responsive" height="" width="600px" /></p>
+
+<p><em>Figure 2: (a) Finite volume mesh, (b) typical control volume and its associated variables.</em></p>
+
+<p>The method starts by defining a piece-wise constant reconstruction of the bathymetry. The mass center value of the elements will be taken as constant over the element. Therefore, a discontinuous values will be provided at each side of the element, this is <code class="language-plaintext highlighter-rouge">in</code> and the <code class="language-plaintext highlighter-rouge">out</code> interface as it is shown in the latter figure. In order  to obtain the final states of the conserved variables, a single value of bed elevation suggested by <a href="#5">[5]</a> is defined:</p>
+
+<script type="math/tex; mode=display">B_{jk} = \max \left( B^{in}_{jk},B^{out}_{jk} \right) \,.</script>
+
+<p>The <strong>First–Order Semi–Discrete Central–Upwind Method</strong> begins by knowing the explicit functions of the conserved variables at the mass center of each triangle at the previous time step, i.e., <script type="math/tex">\mathbf{q}_j^m</script>. Then, a piece-wise constant reconstruction will be employed, this is, the conserved variable values at the mid-point of each side are the same as the mass center.</p>
+
+<script type="math/tex; mode=display">\mathbf{q}_{jk}^{in} = \mathbf{q}_j^{m} \,.</script>
+
+<p>The water level surface reconstruction must be so that the water depth has to be always positive; therefore, the reconstructed water depth at the midpoint <script type="math/tex">h_{jk}</script> should be re-defined as:</p>
+
+<script type="math/tex; mode=display">h^{in}_{jk} = \max \left(Tol, w^{in}_{jk} - B_{jk} \right) \,.</script>
+
+<p>It is simple to show that the reconstruction process defined above do not affect the well-balanced property of the numerical scheme when only wet-bed applications are simulated. However, for dry-bed applications, the well-balanced property is violated, see the following figure</p>
+
+<p><img src="/assets/img/Project2/Fig003.png" alt="image-title-here" class="img-responsive" height="" width="500px" /></p>
+
+<p><em>Figure 3: (a) The <script type="math/tex">i^{th}</script> wet element shares a common edge with the <script type="math/tex">j1^{th}</script> dry element, and the bed elevation of dry element is higher than the water level at the centroid of the <script type="math/tex">i^{th}</script> element. (b) The difference between the actual and fake water level at midpoint <script type="math/tex">_{jk}</script>.</em></p>
+
+<p>The fluxes at the interface between element <script type="math/tex">i</script> and <script type="math/tex">j1</script> are calculated using the bed elevation; however, fluxes at the other two element interfaces are evaluated with the actual water surface elevation <script type="math/tex">w^{in}_{jk}</script> in element <script type="math/tex">i</script>, which drives the flow into motion in the cell <script type="math/tex">i</script> and violates the well-balanced property of the scheme. The local bed modification is proposed by <a href="#4">[4]</a> to tackle this problem. As shown in last figure, the difference between the actual and fake water level at midpoint <script type="math/tex">_{jk}</script> is calculated by:</p>
+
+<script type="math/tex; mode=display">\Delta z = \max \left( 0, B_{jk} - w^{in}_{jk} \right) \,.</script>
+
+<p>Then, the bed elevation and reconstructed water surface elevations at midpoint <script type="math/tex">w^{in}_{jk}</script> are locally modified by subtracting <script type="math/tex">\Delta z</script> from original values:</p>
+
+<script type="math/tex; mode=display">w^{in}_{jk} = w^{in}_{jk} - \Delta z</script>
+
+<p>Once the provided reconstruction preserves the positivity of the water depth, and it is well-balanced, the computation of the velocity field <script type="math/tex">u^{in}_{jk}</script> and <script type="math/tex">v^{in}_{jk}</script> must be carried out:</p>
+
+<script type="math/tex; mode=display">u^{in}_{jk} = \frac{\sqrt{2} \cdot h^{in}_{jk} \cdot hu^{in}_{jk}}{\sqrt{(h^{in}_{jk})^4 + max((h^{in}_{jk})^4,Tol)}}</script>
+
+<script type="math/tex; mode=display">v^{in}_{jk} = \frac{\sqrt{2} \cdot h^{in}_{jk} \cdot hv^{in}_{jk}}{\sqrt{(h^{in}_{jk})^4 + max((h^{in}_{jk})^4,Tol)}}</script>
+
+<p>The flux-discharge must be re-computed due to modifications performed to <script type="math/tex">u</script> and <script type="math/tex">v</script> velocities:</p>
+
+<script type="math/tex; mode=display">hu^{in}_{jk} = h^{in}_{jk} \cdot u^{in}_{jk} \,,</script>
+
+<script type="math/tex; mode=display">hv^{in}_{jk} = h^{in}_{jk} \cdot v^{in}_{jk} \,.</script>
+
+<p>Finally, the one-sided normal velocities <script type="math/tex">w^{in}_{jk}</script> and <script type="math/tex">w^{out}_{jk}</script> can be computed as</p>
+
+<script type="math/tex; mode=display">w^{in}_{jk}  = u^{in}_{jk} \cdot n_{jk}^x +  v^{in}_{jk} \cdot n_{jk}^y \,,</script>
+
+<script type="math/tex; mode=display">w^{out}_{jk} = u^{out}_{jk} \cdot n_{jk}^x +  v^{out}_{jk} \cdot n_{jk}^y \,.</script>
+
+<p>Then, the local propagation speed becomes:</p>
+
+<script type="math/tex; mode=display">a^{in}_{jk}  =  \max \left(w^{in}_{jk} + \sqrt{g \cdot h^{in}_{jk}},w^{out}_{jk} + \sqrt{g \cdot h^{out}_{jk}},0 \right)</script>
+
+<script type="math/tex; mode=display">a^{out}_{jk} = -\min \left(w^{in}_{jk} - \sqrt{g \cdot h^{in}_{jk}},w^{out}_{jk} - \sqrt{g \cdot h^{out}_{jk}},0 \right)</script>
+
+<p>Once equipped with all the previous quantities, we can evaluate the mid-point conserved variables values at each side:</p>
+
+<script type="math/tex; mode=display">\mathbf{q}_{jk}  = \left[ h_{jk} , hu_{jk}, hv_{jk} \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{f}(\mathbf{q}_{jk}) = \left[ hu_{jk}, hu_{jk} + \frac{1}{2}g \, h_{jk}^2, hu_{jk} \cdot v_{jk} \right]^\top \,,</script>
+
+<script type="math/tex; mode=display">\mathbf{g}(\mathbf{q}_{jk}) = \left[ hv_{jk}, hu_{jk} \cdot v_{jk}, hv_{jk} + \frac{1}{2}g \, h_{jk}^2 \right]^\top \,.</script>
+
+<p>The central-upwind scheme <a href="#1">[1]</a> for the <script type="math/tex">j^{th}</script> finite control volume <script type="math/tex">j^{th}</script> must fulfill:</p>
+
+<script type="math/tex; mode=display">\mathbf{q}_j^{m+1} = \mathbf{q}_j^{m} - \frac{\Delta t}{\Delta \Omega_j} \sum_{k=1}^{3} \frac{l_{jk} \cdot n_{jk}^x}{a_{jk}^{in} + a_{jk}^{out}} \left( a_{jk}^{in} \cdot \mathbf{f}(\mathbf{q}^{out}_{jk}) + a_{jk}^{out} \cdot  \mathbf{f}(\mathbf{q}^{in}_{jk}) \right) -</script>
+
+<script type="math/tex; mode=display">\frac{\Delta t}{\Delta \Omega_j} \sum_{k=1}^{3} \frac{l_{jk} \cdot n_{jk}^y}{a_{jk}^{in} + a_{jk}^{out}} \left( a_{jk}^{in} \cdot \mathbf{g}(\mathbf{q}^{out}_{jk}) + a_{jk}^{out} \cdot  \mathbf{g}(\mathbf{q}^{in}_{jk}) \right) +</script>
+
+<script type="math/tex; mode=display">\frac{\Delta t}{\Delta \Omega_j} \sum_{k=1}^{3} l_{jk} \frac{ a_{jk}^{in} \cdot a_{jk}^{out}}{a_{jk}^{in} + a_{jk}^{out}} \left( \mathbf{q}^{out}_{jk} -\mathbf{q}^{in}_{jk} \right) + \Delta t \; \mathbf{S}_j(\mathbf{q}^{in}_j)</script>
+
+<p>In order to guarantee the well-balanced property, the source term must cancel all the flux terms when the lake is at rest, this means that for a given condition as <script type="math/tex">\mathbf{q} = [ C , 0 ,0 ]^\top</script> the evolution should stay the same. One can observe that when the water is at rest <script type="math/tex">\mathbf{q}_j = \mathbf{q}_{jk} = [ C , 0 ,0 ]^\top</script>, the one sided propagation speed becomes <script type="math/tex">a_{jk}^{in} = a_{jk}^{out}</script>, thus the source term becomes:</p>
+
+<script type="math/tex; mode=display">\mathbf{S}_j(\mathbf{q}) = \left[ \begin{array}{c} 0 \\ \displaystyle{\frac{g}{2 \cdot \Omega_j} \sum_{k=1}^{3} l_{jk} \cdot n_{jk}^x \left(w^{in}_{jk} - B_{jk} \right)^2} \\ \displaystyle{\frac{g}{2 \cdot \Omega_j} \sum_{k=1}^{3} l_{jk} \cdot n_{jk}^y \left(w^{in}_{jk} - B_{jk} \right)^2} \end{array} \right]</script>
+
+<p>The complete process can be clearly understood referencing figure(\ref{fig:Fig004}):</p>
+
+<p><img src="/assets/img/Project2/Fig004.png" alt="image-title-here" class="img-responsive" height="" width="700px" /></p>
+
+<p><em>Figure 4: First–Order Semi–Discrete Central–Upwind Method. (a) Continuous conserved variables, (b) Piece-wise constant reconstruction, (c) Positivity preserving reconstruction, (d) Well-balanced reconstruction, (e) Flux-function computation, (f) Conserved variables update.</em></p>
+
+<p>In order to increase the stability in time domain, the time step should be carefully chosen employing the Courant–Friedrichs–Lewy (CFL) condition, see <a href="#6">[6]</a>:</p>
+
+<script type="math/tex; mode=display">\Delta t \leq \frac{1}{3} \min_{j,k} \left[ \frac{r_{jk}}{\max \left( a^{in}_{jk},a^{out}_{jk} \right) } \right] \,.</script>
+
+<h3 id="swe-algorithm">SWE Algorithm.</h3>
+<p>The main structure of the program is summarized in the following algoritm:</p>
+
+<p><img src="/assets/img/Project2/AlgorithmSWE.png" alt="image-title-here" class="img-responsive" height="" width="700px" /></p>
+
+<h3 id="numerical-examples">Numerical Examples.</h3>
+
+<h4 id="solitary-wave-on-a-simple-beach">Solitary Wave On A Simple Beach.</h4>
+<p>The following figure provides a schematic of the experiments indicating the parameters employed:</p>
+
+<p><img src="/assets/img/Project2/Fig005.png" alt="image-title-here" class="img-responsive" height="" width="600px" /> 
+<em>Figure 5: Definition sketch of solitary wave run-up on a plane beach.</em></p>
+
+<p>The defined parameters are: <script type="math/tex">H</script> the incident solitary wave height, <script type="math/tex">R</script> the run-up, <script type="math/tex">x_1</script> represents the initial position of the wave-crest, <script type="math/tex">x_0</script> is the starting point of the sloping beach, <script type="math/tex">d</script> is the constant bathymetry depth, and <script type="math/tex">g</script> the gravitational constant.</p>
+
+<p>Here, we have considered a <script type="math/tex">80 \; [m]</script> long channel with soft conditions at both ends i.e, <script type="math/tex">x = -10 \; [m]</script>, and <script type="math/tex">x = 70 \; [m]</script>. Periodic condition were applied for the upper and lower boundaries i.e <script type="math/tex">y = -5 \; [m]</script>, and <script type="math/tex">y = 5 \; [m]</script>. We use the parameters <script type="math/tex">x_0 = 19.85 \; [m]</script>, <script type="math/tex">x_1 = 37.35 \; [m]</script>, <script type="math/tex">d = 1.00 \; [m]</script>, the gravitational constant was taken as <script type="math/tex">g = 9.80 \; [m/s^2]</script>. Surface roughness becomes important for runup over harsh slopes and a Manning’s coefficient <script type="math/tex">n = 0.01</script> describes the surface condition of the smooth glass beach in the laboratory experiments.</p>
+
+<p>The finite volume mesh has <script type="math/tex">76399</script> nodes, <script type="math/tex">150772</script> tirangular elements, and <script type="math/tex">180</script> ghost cells. The solution is shown in Gmsh in the following youtube video:</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/j0RL9FwNOV0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+
+<h4 id="solitary-wave-on-a-conical-island">Solitary Wave On A Conical Island.</h4>
+<p>The following figure shows a schematic sketch of the experiment. The basin is <script type="math/tex">25 \; [m]</script> long and <script type="math/tex">30 \; [m]</script> wide. The circular island has the shape of a truncated cone with diameters of <script type="math/tex">7.2 \; [m]</script> at the base and <script type="math/tex">2.2 \; [m]</script> at the crest. The island is <script type="math/tex">0.625 \; [m]</script> high and has a side slope of <script type="math/tex">1:4</script>.</p>
+
+<p><img src="/assets/img/Project2/Fig006.png" alt="image-title-here" class="img-responsive" height="" width="600px" /> 
+<em>Figure 6: Schematic sketch of the conical island experiment: (a) plane view and (b) side view.</em></p>
+
+<p>Here, we consider a rectangular domain of <script type="math/tex">[-17.5,17.5] \times [-6.25,6.25]</script> with soft conditions at both ends i.e., <script type="math/tex">x = -17.5 \;[m]</script>, and <script type="math/tex">x = 17.5 \; [m]</script>. Periodic condition were applied for the upper and lower boundaries i.e., <script type="math/tex">y = -6.25 \; [m]</script>, and <script type="math/tex">y = 6.25 \; [m]</script>. We use the parameters <script type="math/tex">x_1 = 12.96 \; [m]</script> as the starting point of the wave height, the gravitational constant was taken as <script type="math/tex">g = 9.80 \; [m/s^2]</script>. The experiment also covers the water depths <script type="math/tex">d = 0.32 \; [m]</script>  and the solitary wave heights <script type="math/tex">H = 0.0144 \; [m]</script>. Therefore, the solitary wave is generated from the left boundary, and a Manning’s roughness coefficient was set to be <script type="math/tex">n = 0.016</script> for the smooth concrete finish.</p>
+
+<p>The finite volume mesh has <script type="math/tex">125804</script> nodes, <script type="math/tex">249554</script> tirangular elements, and <script type="math/tex">392</script> ghost cells. The solution is shown in Gmsh in the following youtube video:</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DwpGGHFCna8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+
+<h3 id="references">References</h3>
+<p><a id="1">[1]</a> 
+Bollermann, Andreas and Chen, Guoxian and Kurganov, Alexander and Noelle, Sebastian
+A Well-Balanced Reconstruction of Wet/Dry Fronts for the Shallow Water Equations.
+Journal of Scientific Computing, August 2013, (56) 267–290.</p>
+
+<p><a id="1">[2]</a> 
+Bryson, S. and Levy, D.
+Balanced Central Schemes for the Shallow Water Equations on Unstructured Grids. 
+SIAM Journal on Scientific Computing, 2005, (27) 532–552.</p>
+
+<p><a id="1">[3]</a> 
+Bryson, Steve and Epshteyn, Yekaterina and Kurganov, Alexander and Petrova, Guergana 
+Well-balanced positivity preserving central-upwind scheme on triangular grids for the Saint-Venant system. 
+ESAIM: Mathematical Modelling and Numerical Analysis, 2011, (54) 423–446</p>
+
+<p><a id="1">[4]</a> 
+Q. Liang
+Flood simulation using a well-balanced shallow flow model.
+Journal of Hydraulic Engineering, 2010, (136) 669–675</p>
+
+<p><a id="1">[5]</a> 
+E. Audusse and  F. Bouchut and  M. Bristeau and R. Klein and B. Perthame.
+A fast and stable well-balanced scheme with hydrostatic reconstruction for shallow water flows.
+SIAM Journal on Scientific Computing, 2004, (25) 2050–2065</p>
+
+<p><a id="1">[6]</a> 
+Courant R. and Friedrichs K. and Lewy H.
+textit{On the partial difference equations of mathematical physics.
+IBM Journal of Research and Development, 1967, (11) 215–234</p>
+
+  </article>
+
+  
+
+  
+
+</div>
+
+      </div>
+    </div>
+
+    <footer>
+
+  <div class="wrapper">
+    &copy; Copyright 2020 Danilo S. Kusanovic.
+    Powered by <a href="http://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+
+    
+  </div>
+
+</footer>
+
+
+    <!-- Load jQuery -->
+<script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<!-- Load Common JS -->
+<script src="/assets/js/common.js"></script>
+
+
+<!-- Load KaTeX -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js"></script>
+<script src="/assets/js/katex.js"></script>
+
+
+
+
+<!-- Include custom icon fonts -->
+<link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/assets/css/academicons.min.css">
+
+
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXXXXXX', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+
+  </body>
+
+</html>
